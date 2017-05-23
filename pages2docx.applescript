@@ -4,32 +4,49 @@
 on run inputFolder
 	
 	tell application "Finder" to set theFiles to every file in the entire contents of folder inputFolder
+	
 	repeat with theFile in theFiles
+		
 		set fExt to name extension of theFile as text
 		set fName to name of theFile as text
-		set theFilesFolder to folder of theFile as text
+		set fDir to folder of theFile as text
 		
 		if fExt is "pages" then
-			
-			tell application "Finder"
-				set theFilesFolder to (folder of theFile) as text
-			end tell
-			
-			tell application "Pages"
-				set theDoc to open (theFilesFolder & fName)
-				set theDocName to name of theDoc
-				set thePDFPath to (theFilesFolder & theDocName & ".docx") as text
-				close access (open for access thePDFPath)
-				export theDoc to file thePDFPath as Microsoft Word
-				close theDoc
-				
-			end tell
-			
-			tell application "Finder"
-				move file thePDFPath to folder theFilesFolder with replacing
-			end tell
+			using terms from application "Pages"
+				convert(fDir, fName, fExt, "Pages", Microsoft Word, ".docx")
+			end using terms from
 		end if
 		
 	end repeat
 	
 end run
+
+on convert(dirName, fileName, fileExtension, appName, exportFormat, exportExtension)
+	
+	tell application appName
+		set fullPath to (dirName & fileName)
+		set doc to open fullPath
+		set docName to name of doc
+		set exportFileName to (dirName & docName & "." & exportExtension) as text
+		close access (open for access exportFileName)
+		
+		-- if fileExtension is "numbers" then
+		--	tell application "Numbers"
+		--		export doc to file exportFileName as exportFormat
+		--	end tell
+		-- end if
+		
+		if fileExtension is "pages" then
+			tell application "Pages"
+				export doc to file exportFileName as exportFormat
+			end tell
+		end if
+		
+		close doc
+	end tell
+	
+	tell application "Finder"
+		move file exportFileName to folder dirName with replacing
+	end tell
+	
+end convert
