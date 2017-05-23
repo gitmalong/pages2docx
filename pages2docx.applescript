@@ -13,7 +13,7 @@ on run inputFolder
 		
 		if fExt is "pages" then
 			using terms from application "Pages"
-				convert(fDir, fName, fExt, "Pages", Microsoft Word, ".docx")
+				convert(fDir, fName, "Pages", Microsoft Word, ".docx")
 			end using terms from
 		end if
 		
@@ -21,7 +21,7 @@ on run inputFolder
 	
 end run
 
-on convert(dirName, fileName, fileExtension, appName, exportFormat, exportExtension)
+on convert(dirName, fileName, appName, exportFormat, exportExtension)
 	
 	tell application appName
 		set fullPath to (dirName & fileName)
@@ -30,19 +30,20 @@ on convert(dirName, fileName, fileExtension, appName, exportFormat, exportExtens
 		set exportFileName to (dirName & docName & "." & exportExtension) as text
 		close access (open for access exportFileName)
 		
-		-- if fileExtension is "numbers" then
+		-- if appName is "numbers" then
 		--	tell application "Numbers"
 		--		export doc to file exportFileName as exportFormat
 		--	end tell
 		-- end if
 		
-		if fileExtension is "pages" then
+		if appName is "Pages" then
 			tell application "Pages"
 				export doc to file exportFileName as exportFormat
 			end tell
 		end if
 		
 		close doc
+		
 	end tell
 	
 	tell application "Finder"
