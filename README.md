@@ -11,6 +11,10 @@ Convert all documents within ~/Documents/:
 - New filename is the same as the original but the .pages file extension is replaced with .docx
 - Existing .docx files with same filename are overwritten
 
+## Todo
+- Add parameter for output format
+- Support .keynote and .numbers format
+
 ## Beer
 Monero: `44ChgnyTpBSCqPbFxvBTjGEXPKf5FsAnfe9h34GCBh2h6rppxqnvCMC7zPXwWRGywbGJxFku85mfU2HoMgH1fpa32Pu9ovm`
 ETH: `0xAdE6b9491D464d91785aD387559EA38e1e7a94Dc`
