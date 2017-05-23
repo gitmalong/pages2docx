@@ -1,5 +1,5 @@
 # pages2docx
-AppleScript script to convert .pages documents to .docx. Tested on Mac OS Sierra.
+AppleScript script to recursively convert all .pages documents within a folder to .docx. Tested on Mac OS Sierra.
 
 ## Usage with Automator:
 - Create new application
