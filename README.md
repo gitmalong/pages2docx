@@ -8,5 +8,10 @@ AppleScript script to recursively convert all .pages documents within a folder t
 - Drag a folder that contains the documents into your view
 - Run script
 
+## Notes
+- Converted files are stored in the same folder as its originals 
+- New filename is the same as the original but the .pages file extension is replaced with .docx
+- Existing .docx files with same filename are overwritten
+
 ## License
 MIT
