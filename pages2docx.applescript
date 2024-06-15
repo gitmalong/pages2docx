@@ -29,38 +29,45 @@ on run inputFolder
 	
 end run
 
-
 on convert(dirName, fileName, appName, exportFormat, exportExtension, unprocessedFiles, processedFiles)
 	
 	tell application appName
 		set fullPath to (dirName & fileName)
 		set posixFullPath to POSIX path of fullPath
-		set doc to open fullPath
-		set docName to name of doc
-		set exportFileName to (dirName & docName & exportExtension) as text
+		set exportFileName to (dirName & fileName & exportExtension) as text
 
-		close access (open for access exportFileName)
+		try
+			set doc to open fullPath
+			if doc is missing value then error "Document is missing"
+			set docName to name of doc
 
-		if appName is "Pages" then
-			tell application "Pages"
-				try
-					export doc to file exportFileName as exportFormat
-					-- If the export succeeds, add the full POSIX path to the list of processed files
-					set end of processedFiles to posixFullPath
-				on error
-					-- If an error occurs, add the full POSIX path to the list of unprocessed files
-					set end of unprocessedFiles to posixFullPath
-				end try
-			end tell
-		end if
-		
-		close doc
-		
+			close access (open for access exportFileName)
+
+			if appName is "Pages" then
+				tell application "Pages"
+					try
+						export doc to file exportFileName as exportFormat
+						-- If the export succeeds, add the full POSIX path to the list of processed files
+						set end of processedFiles to posixFullPath
+
+						tell application "Finder"
+							move file exportFileName to folder dirName with replacing
+						end tell
+					on error
+						-- If an error occurs, add the full POSIX path to the list of unprocessed files
+						set end of unprocessedFiles to posixFullPath
+					end try
+				end tell
+			end if
+			
+			close doc
+		on error
+			-- If an error occurs during opening, add the full POSIX path to the list of unprocessed files
+			set end of unprocessedFiles to posixFullPath
+		end try
 	end tell
 	
-	tell application "Finder"
-		move file exportFileName to folder dirName with replacing
-	end tell
+
 	
 end convert
 
