@@ -1,7 +1,9 @@
--- This script recursively traverses a directory and converts all .pages documents to .docx documents
--- Tested on Mac OS Sierra
--- Command line usage: osascript pages2docx.applescript ~/Documents/
 on run inputFolder
+	
+	-- Define a list to hold the names of files that could not be processed
+	set unprocessedFiles to {}
+	-- Define a list to hold the names of files that were processed successfully
+	set processedFiles to {}
 	
 	tell application "Finder" to set theFiles to every file in the entire contents of folder inputFolder
 	
@@ -13,32 +15,42 @@ on run inputFolder
 		
 		if fExt is "pages" then
 			using terms from application "Pages"
-				convert(fDir, fName, "Pages", Microsoft Word, ".docx")
+				convert(fDir, fName, "Pages", Microsoft Word, ".docx", unprocessedFiles, processedFiles)
+				
 			end using terms from
 		end if
 		
 	end repeat
 	
+	-- Print the list of unprocessed files at the end of the script
+	log "Unprocessed files:\n" & my join(unprocessedFiles, "\n")
+	-- Print the list of successfully processed files at the end of the script
+	log "Successfully processed files:\n" & my join(processedFiles, "\n")
+	
 end run
 
-on convert(dirName, fileName, appName, exportFormat, exportExtension)
+
+on convert(dirName, fileName, appName, exportFormat, exportExtension, unprocessedFiles, processedFiles)
 	
 	tell application appName
 		set fullPath to (dirName & fileName)
+		set posixFullPath to POSIX path of fullPath
 		set doc to open fullPath
 		set docName to name of doc
-		set exportFileName to (dirName & docName & "." & exportExtension) as text
+		set exportFileName to (dirName & docName & exportExtension) as text
+
 		close access (open for access exportFileName)
-		
-		-- if appName is "numbers" then
-		--	tell application "Numbers"
-		--		export doc to file exportFileName as exportFormat
-		--	end tell
-		-- end if
-		
+
 		if appName is "Pages" then
 			tell application "Pages"
-				export doc to file exportFileName as exportFormat
+				try
+					export doc to file exportFileName as exportFormat
+					-- If the export succeeds, add the full POSIX path to the list of processed files
+					set end of processedFiles to posixFullPath
+				on error
+					-- If an error occurs, add the full POSIX path to the list of unprocessed files
+					set end of unprocessedFiles to posixFullPath
+				end try
 			end tell
 		end if
 		
@@ -51,3 +63,12 @@ on convert(dirName, fileName, appName, exportFormat, exportExtension)
 	end tell
 	
 end convert
+
+on join(theList, theDelimiter)
+	set theString to ""
+	set theOldDelimiters to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to theDelimiter
+	set theString to theList as string
+	set AppleScript's text item delimiters to theOldDelimiters
+	return theString
+end join
