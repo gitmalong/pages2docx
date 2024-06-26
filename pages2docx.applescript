@@ -15,7 +15,7 @@ on run inputFolder
 		
 		if fExt is "pages" then
 			using terms from application "Pages"
-				convert(fDir, fName, "Pages", Microsoft Word, ".docx", unprocessedFiles, processedFiles)
+				convert(fDir, fName, "Pages", ".docx", unprocessedFiles, processedFiles)
 				
 			end using terms from
 		end if
@@ -29,7 +29,7 @@ on run inputFolder
 	
 end run
 
-on convert(dirName, fileName, appName, exportFormat, exportExtension, unprocessedFiles, processedFiles)
+on convert(dirName, fileName, appName, exportExtension, unprocessedFiles, processedFiles)
 	
 	tell application appName
 		set fullPath to (dirName & fileName)
@@ -46,7 +46,7 @@ on convert(dirName, fileName, appName, exportFormat, exportExtension, unprocesse
 			if appName is "Pages" then
 				tell application "Pages"
 					try
-						export doc to file exportFileName as exportFormat
+						export doc to file exportFileName as Microsoft Word
 						-- If the export succeeds, add the full POSIX path to the list of processed files
 						set end of processedFiles to posixFullPath
 
