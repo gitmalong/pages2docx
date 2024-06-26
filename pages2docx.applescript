@@ -15,7 +15,7 @@ on run inputFolder
 		
 		if fExt is "pages" then
 			using terms from application "Pages"
-				convert(fDir, fName, "Pages", Microsoft Word, ".docx", unprocessedFiles, processedFiles)
+				convert(fDir, fName, "Pages", "Microsoft Word", ".docx", unprocessedFiles, processedFiles)
 				
 			end using terms from
 		end if
