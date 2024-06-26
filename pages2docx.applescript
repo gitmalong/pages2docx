@@ -15,7 +15,7 @@ on run inputFolder
 		
 		if fExt is "pages" then
 			using terms from application "Pages"
-				convert(fDir, fName, "Pages", ".docx", unprocessedFiles, processedFiles)
+				convert(fDir, fName, ".docx", unprocessedFiles, processedFiles)
 				
 			end using terms from
 		end if
@@ -29,9 +29,9 @@ on run inputFolder
 	
 end run
 
-on convert(dirName, fileName, appName, exportExtension, unprocessedFiles, processedFiles)
+on convert(dirName, fileName, exportExtension, unprocessedFiles, processedFiles)
 	
-	tell application appName
+	tell application "Pages"
 		set fullPath to (dirName & fileName)
 		set posixFullPath to POSIX path of fullPath
 		set exportFileName to (dirName & fileName & exportExtension) as text
@@ -43,22 +43,20 @@ on convert(dirName, fileName, appName, exportExtension, unprocessedFiles, proces
 
 			close access (open for access exportFileName)
 
-			if appName is "Pages" then
-				tell application "Pages"
-					try
-						export doc to file exportFileName as Microsoft Word
-						-- If the export succeeds, add the full POSIX path to the list of processed files
-						set end of processedFiles to posixFullPath
+			tell application "Pages"
+				try
+					export doc to file exportFileName as Microsoft Word
+					-- If the export succeeds, add the full POSIX path to the list of processed files
+					set end of processedFiles to posixFullPath
 
-						tell application "Finder"
-							move file exportFileName to folder dirName with replacing
-						end tell
-					on error
-						-- If an error occurs, add the full POSIX path to the list of unprocessed files
-						set end of unprocessedFiles to posixFullPath
-					end try
-				end tell
-			end if
+					tell application "Finder"
+						move file exportFileName to folder dirName with replacing
+					end tell
+				on error
+					-- If an error occurs, add the full POSIX path to the list of unprocessed files
+					set end of unprocessedFiles to posixFullPath
+				end try
+			end tell
 			
 			close doc
 		on error
